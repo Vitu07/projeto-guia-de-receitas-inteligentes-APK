@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GuiaDeReceitasInteligente</string>
+    <string name="recipe_thumbnail">Miniatura da receita</string>
+    <string name="recipe_image_description">Imagem da receita</string>
+    <string name="toogle_favorite">Adcionar ou remover dos favoritos</string>
+    <string name="read_recipe_aloud">Ler a receita em voz alta</string>
+</resources>
