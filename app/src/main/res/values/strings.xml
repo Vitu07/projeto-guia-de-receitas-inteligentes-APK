@@ -1,7 +1,26 @@
 <resources>
-    <string name="app_name">GuiaDeReceitasInteligente</string>
-    <string name="recipe_thumbnail">Miniatura da receita</string>
-    <string name="recipe_image_description">Imagem da receita</string>
-    <string name="toogle_favorite">Adcionar ou remover dos favoritos</string>
-    <string name="read_recipe_aloud">Ler a receita em voz alta</string>
+    <string name="app_name">Smart Recipe Guide</string>
+    <string name="menu_favorites">Favorite Recipes</string>
+    <string name="menu_about">About</string>
+    <string name="about_title">About</string>
+    <string name="about_message">Smart Recipe Guide\nVersion 1.0\nGrupo 5</string>
+    <string name="dialog_ok">OK</string>
+    <string name="favorites_title">Favorite Recipes</string>
+    <string name="favorites_empty_list">You don\'t have any favorite recipes yet.</string>
+    <string name="details_title_ingredients">Ingredients</string>
+    <string name="details_title_steps">Preparation Steps</string>
+    <string name="details_button_watch_video">Watch Recipe Video</string>
+    <string name="cd_recipe_image">Recipe Image</string>
+    <string name="cd_favorite_icon">Favorite icon</string>
+    <string name="cd_favorite_button">Favorite this Recipe</string>
+    <string name="cd_play_speech_button">Listen to the recipe</string>
+    <string name="error_title">Error</string>
+    <string name="error_loading_recipe">Error loading recipe</string>
+    <string name="error_ingredients_not_available">Ingredients not available.</string>
+    <string name="error_steps_not_available">Preparation steps not available.</string>
+    <string name="tts_label_ingredients">Ingredients</string>
+    <string name="tts_label_steps">Preparation Steps</string>
+    <string name="tts_error_lang_not_supported">English language is not supported.</string>
+    <string name="tts_error_init_failed">TextToSpeech initialization failed!</string>
+    <string name="tts_error_not_initialized">TTS is not initialized yet.</string>
 </resources>

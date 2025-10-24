@@ -1,6 +1,7 @@
 package br.edu.cruzeirodosul.guiadereceitasinteligente.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -47,6 +49,26 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         holder.tvRecipeName.setText(recipe.getTitle());
         holder.tvRecipeCategory.setText(recipe.getCategory());
 
+        ColorStateList tagColor;
+        ColorStateList textColor;
+
+        if ("Doces".equalsIgnoreCase(recipe.getCategory())) {
+            tagColor = ContextCompat.getColorStateList(context, R.color.tag_doces_bg);
+            textColor = ContextCompat.getColorStateList(context, R.color.tag_doces_text);
+        } else if ("Salgados".equalsIgnoreCase(recipe.getCategory())) {
+            tagColor = ContextCompat.getColorStateList(context, R.color.tag_salgados_bg);
+            textColor = ContextCompat.getColorStateList(context, R.color.tag_salgados_text);
+        } else if ("Bebidas".equalsIgnoreCase(recipe.getCategory())) {
+            tagColor = ContextCompat.getColorStateList(context, R.color.tag_bebidas_bg);
+            textColor = ContextCompat.getColorStateList(context, R.color.tag_bebidas_text);
+        } else {
+            tagColor = ContextCompat.getColorStateList(context, R.color.tag_default_bg);
+            textColor = ContextCompat.getColorStateList(context, R.color.tag_default_text);
+        }
+
+        holder.tvRecipeCategory.setBackgroundTintList(tagColor);
+        holder.tvRecipeCategory.setTextColor(textColor);
+
         Glide.with(context)
                 .load(recipe.getImageUrl())
                 .placeholder(R.drawable.ic_launcher_background)
@@ -58,6 +80,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             holder.ivFavoriteIcon.setVisibility(View.VISIBLE);
         } else {
             holder.ivFavoriteIcon.setImageResource(R.drawable.ic_favorite_border);
+            holder.ivFavoriteIcon.setVisibility(View.VISIBLE);
         }
     }
 
@@ -81,14 +104,11 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             tvRecipeCategory = itemView.findViewById(R.id.tvRecipeCategory);
             ivFavoriteIcon = itemView.findViewById(R.id.ivFavoriteIcon);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (clickListener != null) {
-                        int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION) {
-                            clickListener.onRecipeClick(position);
-                        }
+            itemView.setOnClickListener(v -> {
+                if (clickListener != null) {
+                    int pos = getAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION) {
+                        clickListener.onRecipeClick(pos);
                     }
                 }
             });

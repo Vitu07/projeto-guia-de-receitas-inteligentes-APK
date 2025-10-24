@@ -2,4 +2,14 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="tag_doces_bg">#FCE4EC</color>
+    <color name="tag_doces_text">#C2185B</color>
+    <color name="tag_salgados_bg">#E8F5E9</color>
+    <color name="tag_salgados_text">#2E7D32</color>
+    <color name="tag_bebidas_bg">#E3F2FD</color>
+    <color name="tag_bebidas_text">#1565C0</color>
+    <color name="tag_default_bg">#F5F5F5</color>
+    <color name="tag_default_text">#616161</color>
+    <color name="meu_vermelho_principal">#D32F2F</color>
+    <color name="meu_vermelho_escuro">#B71C1C</color>
 </resources>

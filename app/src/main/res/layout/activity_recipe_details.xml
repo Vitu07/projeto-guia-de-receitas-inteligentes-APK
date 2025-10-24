@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/details_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.RecipeDetailsActivity">
@@ -15,39 +16,40 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:paddingBottom="80dp">
 
             <ImageView
-            android:id="@+id/ivRecipeImageDetail"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:contentDescription="Imagem da Receita"
-            tools:src="@drawable/ic_launcher_background" />
+                android:id="@+id/ivRecipeImageDetail"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/cd_recipe_image"
+                tools:src="@drawable/ic_launcher_background" />
 
             <TextView
-            android:id="@+id/tvRecipeNameDetail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            tools:text="Nome da Receita" />
+                android:id="@+id/tvRecipeNameDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                tools:text="Nome da Receita" />
 
             <TextView
-            android:id="@+id/tvRecipeCategoryDetail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="18sp"
-            android:textStyle="italic"
-            tools:text="Categoria" />
+                android:id="@+id/tvRecipeCategoryDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="18sp"
+                android:textStyle="italic"
+                tools:text="Categoria" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Ingredientes"
+                android:text="@string/details_title_ingredients"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -63,7 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Modo de Preparo"
+                android:text="@string/details_title_steps"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -81,15 +83,35 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="24dp"
-                android:text="Ver Vídeo da Receita"
-                android:visibility="gone" />
+                android:text="@string/details_button_watch_video"
+                android:visibility="gone"
+                app:backgroundTint="@color/meu_vermelho_principal"
+                android:textColor="@color/white"
+                tools:visibility="visible"/>
 
         </LinearLayout>
     </ScrollView>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabFavorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        app:srcCompat="@drawable/ic_favorite_border" /> </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:contentDescription="@string/cd_favorite_button"
+        app:backgroundTint="@color/meu_vermelho_principal"
+        app:tint="@color/white"
+        app:srcCompat="@drawable/ic_favorite_border" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabPlaySpeech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/cd_play_speech_button"
+        app:backgroundTint="@color/meu_vermelho_principal"
+        app:tint="@color/white"
+        app:srcCompat="@drawable/ic_play_speech" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

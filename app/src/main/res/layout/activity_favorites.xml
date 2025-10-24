@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/favorites_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.FavoritesActivity">
@@ -21,7 +22,7 @@
         android:id="@+id/tvEmptyFavorites"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Você ainda não tem receitas favoritas."
+        android:text="@string/favorites_empty_list"
         android:textSize="18sp"
         android:textColor="?android:attr/textColorSecondary"
         android:visibility="gone"
@@ -29,4 +30,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" /> </androidx.constraintlayout.widget.ConstraintLayout>
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

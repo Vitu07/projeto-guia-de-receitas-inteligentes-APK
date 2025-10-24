@@ -3,6 +3,7 @@ package br.edu.cruzeirodosul.guiadereceitasinteligente.view;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.widget.Button;
 import android.util.Log;
 import android.widget.ImageView;
@@ -11,20 +12,22 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.activity.EdgeToEdge;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Locale;
 import br.edu.cruzeirodosul.guiadereceitasinteligente.R;
-import br.edu.cruzeirodosul.guiadereceitasinteligente.db.FavoriteDAO;
+import br.edu.cruzeirodosul.guiadereceitasinteligente.db.RecipeDAO;
 import br.edu.cruzeirodosul.guiadereceitasinteligente.model.Recipe;
-
 import br.edu.cruzeirodosul.guiadereceitasinteligente.db.AppDatabase;
-import br.edu.cruzeirodosul.guiadereceitasinteligente.model.Favorite;
 import java.util.concurrent.ExecutorService;
 
-
-public class RecipeDetailsActivity extends AppCompatActivity {
+public class RecipeDetailsActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
     private TextView tvName;
     private TextView tvCategory;
@@ -32,19 +35,33 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     private TextView tvPreparationMethod;
     private ImageView ivRecipeImage;
     private FloatingActionButton fabFavorite;
+    private FloatingActionButton fabPlaySpeech;
     private Recipe recipe;
     private Button btnWatchVideo;
 
-    private FavoriteDAO favoriteDao;
+    private RecipeDAO recipeDao;
     private ExecutorService databaseWriteExecutor;
+
+    private TextToSpeech tts;
+    private boolean ttsInitialized = false;
+    private String textToSpeak = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_recipe_details);
 
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.details_root), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        tts = new TextToSpeech(this, this);
+
         AppDatabase db = AppDatabase.getDatabase(this);
-        favoriteDao = db.favoriteDAO();
+        recipeDao = db.recipeDAO();
         databaseWriteExecutor = AppDatabase.databaseWriteExecutor;
 
         ActionBar actionBar = getSupportActionBar();
@@ -59,7 +76,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         ivRecipeImage = findViewById(R.id.ivRecipeImageDetail);
         fabFavorite = findViewById(R.id.fabFavorite);
         btnWatchVideo = findViewById(R.id.btnWatchVideo);
-
+        fabPlaySpeech = findViewById(R.id.fabPlaySpeech);
 
         Intent intent = getIntent();
         final String EXTRA_KEY = "EXTRA_RECEITA";
@@ -79,21 +96,34 @@ public class RecipeDetailsActivity extends AppCompatActivity {
                 if (recipe.getIngredients() != null) {
                     tvIngredients.setText(recipe.getIngredients());
                 } else {
-                    tvIngredients.setText("Ingredientes não disponíveis.");
+                    tvIngredients.setText(getString(R.string.error_ingredients_not_available));
                 }
                 if (recipe.getSteps() != null){
                     tvPreparationMethod.setText(recipe.getSteps());
                 }else{
-                    tvPreparationMethod.setText("Modo de preparo não disponível.");
+                    tvPreparationMethod.setText(getString(R.string.error_steps_not_available));
                 }
+
+                String ingredientsText = recipe.getIngredients() != null ? recipe.getIngredients() : "";
+                String stepsText = recipe.getSteps() != null ? recipe.getSteps() : "";
+
+                String cleanIngredients = sanitizeTextForSpeech(ingredientsText);
+                String cleanSteps = sanitizeTextForSpeech(stepsText);
+
+                textToSpeak = getString(R.string.tts_label_ingredients) + ": " + cleanIngredients +
+                        ". ... " + getString(R.string.tts_label_steps) + ": " + cleanSteps;
+
                 Glide.with(this)
                         .load(recipe.getImageUrl())
                         .placeholder(R.drawable.ic_launcher_background)
                         .error(R.drawable.ic_launcher_background)
                         .into(ivRecipeImage);
 
-                updateHeartIcon();
+                fabPlaySpeech.setOnClickListener(v -> {
+                    speakOut();
+                });
 
+                updateHeartIcon();
                 fabFavorite.setOnClickListener(v -> {
                     recipe.setFavorite(!recipe.isFavorite());
                     updateHeartIcon();
@@ -114,30 +144,59 @@ public class RecipeDetailsActivity extends AppCompatActivity {
 
             } else {
                 Log.e("RecipeDetailActivity", "Erro: Objeto Recipe é nulo.");
-                if (actionBar != null) actionBar.setTitle("Erro");
-                tvName.setText("Erro ao carregar receita");
+                if (actionBar != null) actionBar.setTitle(getString(R.string.error_title));
+                tvName.setText(getString(R.string.error_loading_recipe));
             }
 
         } else {
             Log.e("RecipeDetailActivity", "Erro: Intent não contém a chave 'EXTRA_RECEITA'.");
-            if (actionBar != null) actionBar.setTitle("Erro");
-            tvName.setText("Erro ao carregar receita");
+            if (actionBar != null) actionBar.setTitle(getString(R.string.error_title));
+            tvName.setText(getString(R.string.error_loading_recipe));
         }
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            int result = tts.setLanguage(new Locale("pt", "BR"));
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", getString(R.string.tts_error_lang_not_supported));
+                tts.setLanguage(Locale.getDefault());
+            }
+            ttsInitialized = true;
+        } else {
+            Log.e("TTS", getString(R.string.tts_error_init_failed));
+            ttsInitialized = false;
+        }
+    }
+
+    private void speakOut() {
+        if (!ttsInitialized) {
+            Log.e("TTS", getString(R.string.tts_error_not_initialized));
+            return;
+        }
+
+        if (tts.isSpeaking()) {
+            tts.stop();
+        } else {
+            tts.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null, null);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onDestroy();
     }
 
     private void updateFavoriteInDatabase() {
         if (recipe == null) return;
 
-        final Favorite favorite = new Favorite(recipe.getTitle());
-
         databaseWriteExecutor.execute(() -> {
-            if (recipe.isFavorite()) {
-                favoriteDao.insert(favorite);
-                Log.d("DB_UPDATE", "Inserido: " + favorite.getTitle());
-            } else {
-                favoriteDao.delete(favorite);
-                Log.d("DB_UPDATE", "Deletado: " + favorite.getTitle());
-            }
+            recipeDao.updateFavoriteStatus(recipe.getTitle(), recipe.isFavorite());
         });
     }
 
@@ -166,5 +225,20 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    private String sanitizeTextForSpeech(String text) {
+        if (text == null) {
+            return "";
+        }
+        String newText = text.replaceAll("1/2", "meia");
+        newText = newText.replaceAll("1/4", "um quarto");
+        newText = newText.replaceAll("3/4", "três quartos");
+        newText = newText.replaceAll("°C", " graus Celsius");
+        newText = newText.replaceAll("°", " graus");
+        newText = newText.replaceAll("%", " por cento");
+        newText = newText.replaceAll("/", " ");
+
+        return newText;
     }
 }

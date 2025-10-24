@@ -1,9 +1,16 @@
 package br.edu.cruzeirodosul.guiadereceitasinteligente.model;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
 
+@Entity(tableName =  "recipe_table")
 public class Recipe implements Serializable {
 
+    @PrimaryKey
+    @NonNull
     private String title;
     private String ingredients;
     private String steps;
@@ -12,7 +19,9 @@ public class Recipe implements Serializable {
     private String category;
 
     private boolean isFavorite = false;
-    public Recipe(String title, String ingredients, String steps, String imageUrl, String videoUrl, String category) {
+
+    public Recipe(){}
+    public Recipe(@NonNull String title, String ingredients, String steps, String imageUrl, String videoUrl, String category) {
         this.title = title;
         this.ingredients = ingredients;
         this.steps = steps;
@@ -21,28 +30,37 @@ public class Recipe implements Serializable {
         this.category = category;
     }
 
+    @NonNull
     public String getTitle() {
         return title;
     }
 
-    public String getIngredients() {
-        return ingredients;
+    public void setTitle(@NonNull String title) {
+        this.title = title;
     }
 
-    public String getSteps() {
-        return steps;
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getImageUrl() {
         return imageUrl;
     }
 
-    public String getVideoUrl() {
-        return videoUrl;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
-    public String getCategory() {
-        return category;
+    public String getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(String ingredients) {
+        this.ingredients = ingredients;
     }
 
     public boolean isFavorite() {
@@ -51,5 +69,21 @@ public class Recipe implements Serializable {
 
     public void setFavorite(boolean favorite) {
         isFavorite = favorite;
+    }
+
+    public String getSteps() {
+        return steps;
+    }
+
+    public void setSteps(String steps) {
+        this.steps = steps;
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
     }
 }

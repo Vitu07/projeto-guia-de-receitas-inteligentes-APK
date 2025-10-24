@@ -4,13 +4,13 @@
 
     <item
         android:id="@+id/action_favorites"
-        android:title="Receitas Favoritas"
+        android:title="@string/menu_favorites"
         android:icon="@android:drawable/ic_menu_myplaces"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_about"
-        android:title="Sobre"
+        android:title="@string/menu_about"
         app:showAsAction="never" />
 
 </menu>

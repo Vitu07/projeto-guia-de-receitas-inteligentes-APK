@@ -2,7 +2,6 @@ package br.edu.cruzeirodosul.guiadereceitasinteligente.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,47 +9,61 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.activity.EdgeToEdge;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import br.edu.cruzeirodosul.guiadereceitasinteligente.R;
 import br.edu.cruzeirodosul.guiadereceitasinteligente.adapter.RecipeAdapter;
+import br.edu.cruzeirodosul.guiadereceitasinteligente.db.RecipeDAO;
 import br.edu.cruzeirodosul.guiadereceitasinteligente.model.Recipe;
+
+import br.edu.cruzeirodosul.guiadereceitasinteligente.db.AppDatabase;
 
 public class FavoritesActivity extends AppCompatActivity implements RecipeAdapter.OnRecipeClickListener {
 
     private RecyclerView rvFavorites;
     private TextView tvEmptyFavorites;
     private RecipeAdapter adapter;
-    private ArrayList<Recipe> favoriteList;
+    private ArrayList<Recipe> favoriteList = new ArrayList<>();
 
     private ActivityResultLauncher<Intent> detailsLauncher;
     private int clickedPosition = -1;
 
+    private RecipeDAO recipeDao;
+    private ExecutorService databaseWriteExecutor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_favorites);
+
+        AppDatabase db = AppDatabase.getDatabase(this);
+        recipeDao = db.recipeDAO();
+        databaseWriteExecutor = AppDatabase.databaseWriteExecutor;
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.favorites_root), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("Receitas Favoritas");
+            actionBar.setTitle(getString(R.string.favorites_title));
         }
 
-        // --- Encontra as Views ---
         rvFavorites = findViewById(R.id.rvFavorites);
         tvEmptyFavorites = findViewById(R.id.tvEmptyFavorites);
-
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("FAVORITE_LIST")) {
-            favoriteList = (ArrayList<Recipe>) intent.getSerializableExtra("FAVORITE_LIST");
-        } else {
-            favoriteList = new ArrayList<>();
-            Log.e("FavoritesActivity", "Não foi possível carregar a lista de favoritos.");
-        }
 
         adapter = new RecipeAdapter(this, favoriteList, this);
         rvFavorites.setLayoutManager(new LinearLayoutManager(this));
@@ -66,15 +79,13 @@ public class FavoritesActivity extends AppCompatActivity implements RecipeAdapte
                             Recipe updatedRecipe = (Recipe) data.getSerializableExtra("UPDATED_RECIPE");
 
                             if (updatedRecipe != null) {
-                                if (updatedRecipe.isFavorite()) {
-                                    favoriteList.set(clickedPosition, updatedRecipe);
-                                    adapter.notifyItemChanged(clickedPosition);
-                                } else {
+                                if (!updatedRecipe.isFavorite()) {
                                     favoriteList.remove(clickedPosition);
                                     adapter.notifyItemRemoved(clickedPosition);
-
-
                                     checkEmptyList();
+                                } else {
+                                    favoriteList.set(clickedPosition, updatedRecipe);
+                                    adapter.notifyItemChanged(clickedPosition);
                                 }
                             }
                             clickedPosition = -1;
@@ -82,8 +93,25 @@ public class FavoritesActivity extends AppCompatActivity implements RecipeAdapte
                     }
                 }
         );
+    }
 
-        checkEmptyList();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadFavoritesFromDatabase();
+    }
+
+    private void loadFavoritesFromDatabase() {
+        databaseWriteExecutor.execute(() -> {
+            List<Recipe> favRecipes = recipeDao.getAllFavorites();
+
+            runOnUiThread(() -> {
+                favoriteList.clear();
+                favoriteList.addAll(favRecipes);
+                adapter.notifyDataSetChanged();
+                checkEmptyList();
+            });
+        });
     }
 
 

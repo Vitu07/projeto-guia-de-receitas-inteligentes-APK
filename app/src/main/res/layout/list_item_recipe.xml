@@ -18,9 +18,10 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:scaleType="centerCrop"
+            android:contentDescription="@string/cd_recipe_image"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/ic_launcher_background" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_launcher_background" />
 
         <TextView
             android:id="@+id/tvRecipeName"
@@ -37,21 +38,31 @@
 
         <TextView
             android:id="@+id/tvRecipeCategory"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            app:layout_constraintEnd_toEndOf="@id/tvRecipeName"
+            android:background="@drawable/bg_tag"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/tvRecipeName"
             app:layout_constraintTop_toBottomOf="@id/tvRecipeName"
-            tools:text="Categoria" />
+            tools:text="Categoria"
+            tools:backgroundTint="@color/tag_default_bg"
+            tools:textColor="@color/tag_default_text"/>
 
         <ImageView
             android:id="@+id/ivFavoriteIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:contentDescription="@string/cd_favorite_icon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:src="@drawable/ic_favorite_border" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

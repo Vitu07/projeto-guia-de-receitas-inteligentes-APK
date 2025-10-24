@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Guia de Receitas Inteligente</string>
+    <string name="menu_favorites">Receitas Favoritas</string>
+    <string name="menu_about">Sobre</string>
+    <string name="about_title">Sobre</string>
+    <string name="about_message">Guia de Receitas Inteligente\nVersão 1.0\nGrupo 5</string>
+    <string name="dialog_ok">OK</string>
+    <string name="favorites_title">Receitas Favoritas</string>
+    <string name="favorites_empty_list">Você ainda não tem receitas favoritas.</string>
+    <string name="details_title_ingredients">Ingredientes</string>
+    <string name="details_title_steps">Modo de Preparo</string>
+    <string name="details_button_watch_video">Ver Vídeo da Receita</string>
+    <string name="cd_recipe_image">Imagem da Receita</string>
+    <string name="cd_favorite_icon">Ícone de favorito</string>
+    <string name="cd_favorite_button">Favoritar Receita</string>
+    <string name="cd_play_speech_button">Ouvir a receita</string>
+    <string name="error_title">Erro</string>
+    <string name="error_loading_recipe">Erro ao carregar receita</string>
+    <string name="error_ingredients_not_available">Ingredientes não disponíveis.</string>
+    <string name="error_steps_not_available">Modo de preparo não disponível.</string>
+    <string name="tts_label_ingredients">Ingredientes</string>
+    <string name="tts_label_steps">Modo de Preparo</string>
+    <string name="tts_error_lang_not_supported">O idioma Português (Brasil) não é suportado.</string>
+    <string name="tts_error_init_failed">Falha ao inicializar o TextToSpeech!</string>
+    <string name="tts_error_not_initialized">TTS ainda não foi inicializado.</string>
+</resources>
